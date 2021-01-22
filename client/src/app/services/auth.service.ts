@@ -1,22 +1,23 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Customer } from '../interface/customer';
+import { CustomerService } from './customer.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   // the user id end user token
-  token$: string = '';
-  id$: string = '';
+  token: string = '';
+  id: string = '';
 
   // if the user is logged this go to be true
   isLogged = false;
 
   // user info
-  user: any;
+  user: any = null;
 
   // url to deferent path
   //basic url
@@ -26,23 +27,26 @@ export class AuthService {
   //url to subscribe
   readonly urlSubscribe = '/users/newUser';
 
-  //  headers
-  readonly headers = new HttpHeaders()
-    .set('auth-token', `${this.token$}`)
-    .set('Authorization', 'my-auth-token')
-    .set('Content-Type', 'application/json');
-
-  constructor(public router: Router, public http: HttpClient) {}
+  constructor(
+    public router: Router,
+    public http: HttpClient,
+    private injector: Injector
+  ) {}
 
   // subscribe user
   subscribe(valid, value) {
     if (valid) {
+      //  headers
+      const headers = new HttpHeaders()
+        .set('auth-token', `${this.token}`)
+        .set('Authorization', 'my-auth-token')
+        .set('Content-Type', 'application/json');
       this.http
         .post<Customer>(
           `${this.basicUrl}/users/newUser`,
           JSON.stringify(value),
           {
-            headers: this.headers,
+            headers: headers,
           }
         )
         .subscribe((data: any) => {
@@ -54,17 +58,19 @@ export class AuthService {
     }
   }
 
-
-
   // login user
   login(valid, value) {
     if (valid) {
+      const headers = new HttpHeaders()
+        .set('auth-token', `${this.token}`)
+        .set('Authorization', 'my-auth-token')
+        .set('Content-Type', 'application/json');
       this.http
         .post<Customer>(
           `${this.basicUrl}/auth/loginUser`,
           JSON.stringify(value),
           {
-            headers: this.headers,
+            headers: headers,
           }
         )
         .subscribe((data: any) => {
@@ -80,34 +86,38 @@ export class AuthService {
 
   // get token end id end logged to true end navigate
   getTokenEndNavigate() {
-    this.token$ = window.localStorage.getItem('token');
+    this.token = window.localStorage.getItem('token');
     this.user = JSON.parse(window.localStorage.getItem('user'));
-    this.id$ = this.user._id;
-    console.log(this.id$);
+    this.id = this.user._id;
+    console.log(this.id);
 
-    if (!this.id$) {
-      return console.log('error', this.id$);
+    if (!this.id) {
+      return console.log('error', this.id);
     }
     this.isLogged = true;
 
     console.log(this.urlLogin);
 
-    this.router.navigate([this.urlLogin, this.id$, 'profile']);
+    this.router.navigate([this.urlLogin, this.id, 'profile']);
   }
 
-
-  getToken(){
-    this.token$ = window.localStorage.getItem('token');
+   getToken() {
+    this.token = '';
+    this.user = null;
+    this.id = '';
+    this.token = window.localStorage.getItem('token');
     this.user = JSON.parse(window.localStorage.getItem('user'));
-    this.id$ = this.user._id;
-    console.log(this.id$);
+    this.id = this.user._id;
+    console.log(this.id);
 
-    if (!this.id$) {
-      return console.log('error', this.id$);
+    if (!this.id) {
+      return console.log('error', this.id);
     }
   }
 
   logOut() {
+    let { customerObservable$ } = this.injector.get(CustomerService);
+    customerObservable$ = null;
     this.isLogged = false;
     window.localStorage.clear();
   }

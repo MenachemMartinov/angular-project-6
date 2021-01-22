@@ -16,16 +16,25 @@ export class CordService {
   cardObservable$: Observable<Cards> = null;
 
   // card id end users token
-  cardId$: string = '';
-  token$: string = null;
+  cardId: string = '';
+  token: string = '';
+
+  // get the token
+  getToken() {
+    this.token = window.localStorage.getItem('token');
+  }
 
   //  headers
-  readonly headers = new HttpHeaders()
-    .set('auth-token', `${this.authService.token$}`)
+  private headers = new HttpHeaders()
+    .set('auth-token', `${window.localStorage.getItem('token')}`)
     .set('Authorization', 'my-auth-token')
     .set('Content-Type', 'application/json');
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private router: Router, private authService: AuthService) {
+    this.getToken()
+  }
+
+
 
   // new card
   newCard(valid, value) {
@@ -42,7 +51,7 @@ export class CordService {
           console.log(data);
           this.router.navigate([
             '/dashboard',
-            this.authService.id$,
+            this.authService.id,
             'cards',
             'all-cards',
           ]);
@@ -51,33 +60,48 @@ export class CordService {
   }
 
   // get all cards
-  allCards() {
+  async allCards() {
+    await this.getToken();
+
+    const headers = new HttpHeaders()
+    .set('auth-token', `${this.token}`)
+    .set('Authorization', 'my-auth-token')
+    .set('Content-Type', 'application/json');
     this.allCardsObservable$ = this.authService.http.get(
       `${this.authService.basicUrl}/cards/allCards`,
       {
-        headers: this.headers,
+        headers: headers,
       }
     );
   }
   // get my cards
-  myCards() {
+  async getMyCards() {
+    await this.getToken();
+
+    const headers = new HttpHeaders()
+    .set('auth-token', `${this.token}`)
+    .set('Authorization', 'my-auth-token')
+    .set('Content-Type', 'application/json');
     this.allCardsObservable$ = this.authService.http.get(
       `${this.authService.basicUrl}/cards/myCards`,
       {
-        headers: this.headers,
+        headers: headers,
       }
     );
   }
 
-
-  // get card
+  // get single card
   getCardInfo() {
-    console.log(this.cardId$);
+    console.log(this.cardId);
 
+    const headers = new HttpHeaders()
+    .set('auth-token', `${this.token}`)
+    .set('Authorization', 'my-auth-token')
+    .set('Content-Type', 'application/json');
     this.cardObservable$ = this.authService.http.get<Cards>(
-      `${this.authService.basicUrl}/cards/${this.cardId$}`,
+      `${this.authService.basicUrl}/cards/${this.cardId}`,
       {
-        headers: this.headers,
+        headers: headers,
       }
     );
   }
@@ -85,14 +109,18 @@ export class CordService {
   // update card
   updateCard(valid, value) {
     if (valid) {
-      console.log(this.cardId$);
+      console.log(this.cardId);
 
+      const headers = new HttpHeaders()
+        .set('auth-token', `${this.token}`)
+        .set('Authorization', 'my-auth-token')
+        .set('Content-Type', 'application/json');
       this.authService.http
         .put(
-          `${this.authService.basicUrl}/cards/${this.cardId$}`,
+          `${this.authService.basicUrl}/cards/${this.cardId}`,
           JSON.stringify(value),
           {
-            headers: this.headers,
+            headers: headers,
           }
         )
         .subscribe((data: any) => {

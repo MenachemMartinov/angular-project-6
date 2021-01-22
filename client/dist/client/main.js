@@ -36,25 +36,28 @@ class CustomerService {
     constructor(authService, http) {
         this.authService = authService;
         this.http = http;
-        this.customerObservable = null;
+        this.customerObservable$ = null;
         //  headers
         this.headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]()
-            .set('auth-token', `${this.authService.token$}`)
+            .set('auth-token', `${this.authService.token}`)
             .set('Authorization', 'my-auth-token')
             .set('Content-Type', 'application/json');
     }
     getCustomerInfo() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
             yield this.authService.getToken();
-            console.log(this.authService.headers);
-            this.customerObservable = this.http.get(`${this.authService.basicUrl}/users/user-details`, { headers: this.headers });
+            const headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]()
+                .set('auth-token', `${this.authService.token}`)
+                .set('Authorization', 'my-auth-token')
+                .set('Content-Type', 'application/json');
+            this.customerObservable$ = this.http.get(`${this.authService.basicUrl}/users/user-details`, { headers: headers });
         });
     }
     // update user
     update(valid, value) {
         if (valid) {
             this.http
-                .put(`${this.authService.basicUrl}/users/${this.authService.id$}`, JSON.stringify(value), {
+                .put(`${this.authService.basicUrl}/users/${this.authService.id}`, JSON.stringify(value), {
                 headers: this.headers,
             })
                 .subscribe(console.log);
@@ -426,16 +429,18 @@ class MyCardsComponent {
         // for subscribe to get all cards
         this.allCards = [];
         this.allCards = [];
-        this.cardService.myCards();
-        this.customerId = this.authService.id$;
+        this.cardService.getMyCards();
+        this.customerId = this.authService.id;
         console.log(this.allCards);
+        console.log(this.authService.token);
+        console.log(this.cardService.token);
     }
     ngOnInit() {
         // subscribe to get the cards
         if (this.cardService.allCardsObservable$) {
             this.cardService.allCardsObservable$.subscribe((data) => {
                 console.log(data);
-                this.allCards = [];
+                console.log(this.allCards);
                 this.allCards = data;
             });
         }
@@ -607,32 +612,32 @@ class SideNavComponent {
             {
                 title: 'profile',
                 icon: 'fas fa-flag',
-                link: `/dashboard/${this.authService.id$}/profile`,
+                link: `/dashboard/${this.authService.id}/profile`,
             },
             {
                 title: 'profile edit',
                 icon: 'fas fa-flag',
-                link: `/dashboard/${this.authService.id$}/profile/edit`,
+                link: `/dashboard/${this.authService.id}/profile/edit`,
             },
             {
                 title: 'all-cards',
                 icon: 'fas fa-flag',
-                link: `/dashboard/${this.authService.id$}/cards/all-cards`,
+                link: `/dashboard/${this.authService.id}/cards/all-cards`,
             },
             {
                 title: 'my-cards',
                 icon: 'fas fa-flag',
-                link: `/dashboard/${this.authService.id$}/cards/my-cards`,
+                link: `/dashboard/${this.authService.id}/cards/my-cards`,
             },
             {
                 title: 'new-cards',
                 icon: 'fas fa-flag',
-                link: `/dashboard/${this.authService.id$}/cards/new-cards`,
+                link: `/dashboard/${this.authService.id}/cards/new-cards`,
             },
             {
                 title: 'edit-cards',
                 icon: 'fas fa-hand-point-up',
-                link: `/dashboard/${this.authService.id$}/cards/${this.cardServices.cardId$}/edit-card`,
+                link: `/dashboard/${this.authService.id}/cards/${this.cardServices.cardId}/edit-card`,
             },
             {
                 title: 'pageNotFund',
@@ -874,7 +879,7 @@ class AuthGuard {
             if (this.authService.isLogged === true) {
                 return this.router.createUrlTree([
                     '/dashboard',
-                    this.authService.id$,
+                    this.authService.id,
                     'profile',
                 ]);
             }
@@ -884,7 +889,7 @@ class AuthGuard {
             if (this.authService.isLogged === true) {
                 return this.router.createUrlTree([
                     '/dashboard',
-                    this.authService.id$,
+                    this.authService.id,
                     'profile',
                 ]);
             }
@@ -923,10 +928,12 @@ AuthGuard.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjecta
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CordService", function() { return CordService; });
-/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/router */ "tyNb");
-/* harmony import */ var _auth_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./auth.service */ "lGQG");
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/router */ "tyNb");
+/* harmony import */ var _auth_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./auth.service */ "lGQG");
+
 
 
 
@@ -941,13 +948,18 @@ class CordService {
         // card observable
         this.cardObservable$ = null;
         // card id end users token
-        this.cardId$ = '';
-        this.token$ = null;
+        this.cardId = '';
+        this.token = '';
         //  headers
-        this.headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_0__["HttpHeaders"]()
-            .set('auth-token', `${this.authService.token$}`)
+        this.headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]()
+            .set('auth-token', `${window.localStorage.getItem('token')}`)
             .set('Authorization', 'my-auth-token')
             .set('Content-Type', 'application/json');
+        this.getToken();
+    }
+    // get the token
+    getToken() {
+        this.token = window.localStorage.getItem('token');
     }
     // new card
     newCard(valid, value) {
@@ -960,7 +972,7 @@ class CordService {
                 console.log(data);
                 this.router.navigate([
                     '/dashboard',
-                    this.authService.id$,
+                    this.authService.id,
                     'cards',
                     'all-cards',
                 ]);
@@ -969,30 +981,52 @@ class CordService {
     }
     // get all cards
     allCards() {
-        this.allCardsObservable$ = this.authService.http.get(`${this.authService.basicUrl}/cards/allCards`, {
-            headers: this.headers,
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            yield this.getToken();
+            const headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]()
+                .set('auth-token', `${this.token}`)
+                .set('Authorization', 'my-auth-token')
+                .set('Content-Type', 'application/json');
+            this.allCardsObservable$ = this.authService.http.get(`${this.authService.basicUrl}/cards/allCards`, {
+                headers: headers,
+            });
         });
     }
     // get my cards
-    myCards() {
-        this.allCardsObservable$ = this.authService.http.get(`${this.authService.basicUrl}/cards/myCards`, {
-            headers: this.headers,
+    getMyCards() {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            yield this.getToken();
+            const headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]()
+                .set('auth-token', `${this.token}`)
+                .set('Authorization', 'my-auth-token')
+                .set('Content-Type', 'application/json');
+            this.allCardsObservable$ = this.authService.http.get(`${this.authService.basicUrl}/cards/myCards`, {
+                headers: headers,
+            });
         });
     }
-    // get card
+    // get single card
     getCardInfo() {
-        console.log(this.cardId$);
-        this.cardObservable$ = this.authService.http.get(`${this.authService.basicUrl}/cards/${this.cardId$}`, {
-            headers: this.headers,
+        console.log(this.cardId);
+        const headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]()
+            .set('auth-token', `${this.token}`)
+            .set('Authorization', 'my-auth-token')
+            .set('Content-Type', 'application/json');
+        this.cardObservable$ = this.authService.http.get(`${this.authService.basicUrl}/cards/${this.cardId}`, {
+            headers: headers,
         });
     }
     // update card
     updateCard(valid, value) {
         if (valid) {
-            console.log(this.cardId$);
+            console.log(this.cardId);
+            const headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]()
+                .set('auth-token', `${this.token}`)
+                .set('Authorization', 'my-auth-token')
+                .set('Content-Type', 'application/json');
             this.authService.http
-                .put(`${this.authService.basicUrl}/cards/${this.cardId$}`, JSON.stringify(value), {
-                headers: this.headers,
+                .put(`${this.authService.basicUrl}/cards/${this.cardId}`, JSON.stringify(value), {
+                headers: headers,
             })
                 .subscribe((data) => {
                 console.log(data);
@@ -1000,14 +1034,14 @@ class CordService {
         }
     }
 }
-CordService.ɵfac = function CordService_Factory(t) { return new (t || CordService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_auth_service__WEBPACK_IMPORTED_MODULE_3__["AuthService"])); };
-CordService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: CordService, factory: CordService.ɵfac, providedIn: 'root' });
-/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](CordService, [{
-        type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"],
+CordService.ɵfac = function CordService_Factory(t) { return new (t || CordService)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵinject"](_angular_router__WEBPACK_IMPORTED_MODULE_3__["Router"]), _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵinject"](_auth_service__WEBPACK_IMPORTED_MODULE_4__["AuthService"])); };
+CordService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineInjectable"]({ token: CordService, factory: CordService.ɵfac, providedIn: 'root' });
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵsetClassMetadata"](CordService, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_2__["Injectable"],
         args: [{
                 providedIn: 'root',
             }]
-    }], function () { return [{ type: _angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"] }, { type: _auth_service__WEBPACK_IMPORTED_MODULE_3__["AuthService"] }]; }, null); })();
+    }], function () { return [{ type: _angular_router__WEBPACK_IMPORTED_MODULE_3__["Router"] }, { type: _auth_service__WEBPACK_IMPORTED_MODULE_4__["AuthService"] }]; }, null); })();
 
 
 /***/ }),
@@ -1433,21 +1467,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AuthService", function() { return AuthService; });
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/router */ "tyNb");
+/* harmony import */ var _customer_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./customer.service */ "0zL+");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/router */ "tyNb");
+
 
 
 
 
 
 class AuthService {
-    constructor(router, http) {
+    constructor(router, http, injector) {
         this.router = router;
         this.http = http;
+        this.injector = injector;
         // the user id end user token
-        this.token$ = '';
-        this.id$ = '';
+        this.token = '';
+        this.id = '';
         // if the user is logged this go to be true
         this.isLogged = false;
+        // user info
+        this.user = null;
         // url to deferent path
         //basic url
         this.basicUrl = '/api';
@@ -1455,18 +1494,18 @@ class AuthService {
         this.urlLogin = `/dashboard`;
         //url to subscribe
         this.urlSubscribe = '/users/newUser';
-        //  headers
-        this.headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_0__["HttpHeaders"]()
-            .set('auth-token', `${this.token$}`)
-            .set('Authorization', 'my-auth-token')
-            .set('Content-Type', 'application/json');
     }
     // subscribe user
     subscribe(valid, value) {
         if (valid) {
+            //  headers
+            const headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_0__["HttpHeaders"]()
+                .set('auth-token', `${this.token}`)
+                .set('Authorization', 'my-auth-token')
+                .set('Content-Type', 'application/json');
             this.http
                 .post(`${this.basicUrl}/users/newUser`, JSON.stringify(value), {
-                headers: this.headers,
+                headers: headers,
             })
                 .subscribe((data) => {
                 console.log(data);
@@ -1479,9 +1518,13 @@ class AuthService {
     // login user
     login(valid, value) {
         if (valid) {
+            const headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_0__["HttpHeaders"]()
+                .set('auth-token', `${this.token}`)
+                .set('Authorization', 'my-auth-token')
+                .set('Content-Type', 'application/json');
             this.http
                 .post(`${this.basicUrl}/auth/loginUser`, JSON.stringify(value), {
-                headers: this.headers,
+                headers: headers,
             })
                 .subscribe((data) => {
                 console.log(data);
@@ -1494,39 +1537,44 @@ class AuthService {
     }
     // get token end id end logged to true end navigate
     getTokenEndNavigate() {
-        this.token$ = window.localStorage.getItem('token');
+        this.token = window.localStorage.getItem('token');
         this.user = JSON.parse(window.localStorage.getItem('user'));
-        this.id$ = this.user._id;
-        console.log(this.id$);
-        if (!this.id$) {
-            return console.log('error', this.id$);
+        this.id = this.user._id;
+        console.log(this.id);
+        if (!this.id) {
+            return console.log('error', this.id);
         }
         this.isLogged = true;
         console.log(this.urlLogin);
-        this.router.navigate([this.urlLogin, this.id$, 'profile']);
+        this.router.navigate([this.urlLogin, this.id, 'profile']);
     }
     getToken() {
-        this.token$ = window.localStorage.getItem('token');
+        this.token = '';
+        this.user = null;
+        this.id = '';
+        this.token = window.localStorage.getItem('token');
         this.user = JSON.parse(window.localStorage.getItem('user'));
-        this.id$ = this.user._id;
-        console.log(this.id$);
-        if (!this.id$) {
-            return console.log('error', this.id$);
+        this.id = this.user._id;
+        console.log(this.id);
+        if (!this.id) {
+            return console.log('error', this.id);
         }
     }
     logOut() {
+        let { customerObservable$ } = this.injector.get(_customer_service__WEBPACK_IMPORTED_MODULE_2__["CustomerService"]);
+        customerObservable$ = null;
         this.isLogged = false;
         window.localStorage.clear();
     }
 }
-AuthService.ɵfac = function AuthService_Factory(t) { return new (t || AuthService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_0__["HttpClient"])); };
+AuthService.ɵfac = function AuthService_Factory(t) { return new (t || AuthService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_router__WEBPACK_IMPORTED_MODULE_3__["Router"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_0__["HttpClient"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"])); };
 AuthService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: AuthService, factory: AuthService.ɵfac, providedIn: 'root' });
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](AuthService, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"],
         args: [{
                 providedIn: 'root',
             }]
-    }], function () { return [{ type: _angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"] }, { type: _angular_common_http__WEBPACK_IMPORTED_MODULE_0__["HttpClient"] }]; }, null); })();
+    }], function () { return [{ type: _angular_router__WEBPACK_IMPORTED_MODULE_3__["Router"] }, { type: _angular_common_http__WEBPACK_IMPORTED_MODULE_0__["HttpClient"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injector"] }]; }, null); })();
 
 
 /***/ }),
@@ -1710,8 +1758,8 @@ class ProfileEditComponent {
     }
     ngOnInit() {
         // subscribe to the observable to get data
-        if (this.customerService.customerObservable) {
-            this.customerService.customerObservable.subscribe((data) => {
+        if (this.customerService.customerObservable$) {
+            this.customerService.customerObservable$.subscribe((data) => {
                 console.log(data);
                 this.form = data;
             });
@@ -1841,8 +1889,10 @@ class CardsComponent {
         this.authService = authService;
         // id for link
         this.customerId = '';
+        // for subscribe to get all cards
+        this.allCards = [];
         this.cardService.allCards();
-        this.customerId = this.authService.id$;
+        this.customerId = this.authService.id;
         console.log(this.allCards);
     }
     ngOnInit() {
@@ -2293,7 +2343,7 @@ class EditCardsComponent {
         activateRoute.params.subscribe((data) => {
             console.log(data);
             console.log(data === null || data === void 0 ? void 0 : data.id);
-            this.cardService.cardId$ = data === null || data === void 0 ? void 0 : data.id;
+            this.cardService.cardId = data === null || data === void 0 ? void 0 : data.id;
         });
         this.cardService.getCardInfo();
     }

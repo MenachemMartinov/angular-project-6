@@ -20,9 +20,12 @@ export class MyCardsComponent implements OnInit {
     private authService: AuthService
   ) {
     this.allCards = []
-    this.cardService.myCards();
-    this.customerId = this.authService.id$;
+    this.cardService.getMyCards();
+    this.customerId = this.authService.id;
     console.log(this.allCards);
+    console.log(this.authService.token);
+    console.log(this.cardService.token);
+
   }
 
   ngOnInit(): void {
@@ -30,7 +33,7 @@ export class MyCardsComponent implements OnInit {
     if (this.cardService.allCardsObservable$) {
       this.cardService.allCardsObservable$.subscribe((data) => {
         console.log(data);
-        this.allCards = []
+        console.log(this.allCards)
         this.allCards = data;
       });
     }

@@ -13,32 +13,32 @@ export class SideNavComponent implements OnInit {
     {
       title: 'profile',
       icon: 'fas fa-flag',
-      link: `/dashboard/${this.authService.id$}/profile`,
+      link: `/dashboard/${this.authService.id}/profile`,
     },
     {
       title: 'profile edit',
       icon: 'fas fa-flag',
-      link: `/dashboard/${this.authService.id$}/profile/edit`,
+      link: `/dashboard/${this.authService.id}/profile/edit`,
     },
     {
       title: 'all-cards',
       icon: 'fas fa-flag',
-      link: `/dashboard/${this.authService.id$}/cards/all-cards`,
+      link: `/dashboard/${this.authService.id}/cards/all-cards`,
     },
     {
       title: 'my-cards',
       icon: 'fas fa-flag',
-      link: `/dashboard/${this.authService.id$}/cards/my-cards`,
+      link: `/dashboard/${this.authService.id}/cards/my-cards`,
     },
     {
       title: 'new-cards',
       icon: 'fas fa-flag',
-      link: `/dashboard/${this.authService.id$}/cards/new-cards`,
+      link: `/dashboard/${this.authService.id}/cards/new-cards`,
     },
     {
       title: 'edit-cards',
       icon: 'fas fa-hand-point-up',
-      link: `/dashboard/${this.authService.id$}/cards/${this.cardServices.cardId$}/edit-card`,
+      link: `/dashboard/${this.authService.id}/cards/${this.cardServices.cardId}/edit-card`,
     },
     {
       title: 'pageNotFund',

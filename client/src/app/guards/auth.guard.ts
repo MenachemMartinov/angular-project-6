@@ -26,7 +26,7 @@ export class AuthGuard implements CanActivate {
       if (this.authService.isLogged === true) {
         return this.router.createUrlTree([
           '/dashboard',
-          this.authService.id$,
+          this.authService.id,
           'profile',
         ]);
       }
@@ -38,7 +38,7 @@ export class AuthGuard implements CanActivate {
       if (this.authService.isLogged === true) {
         return this.router.createUrlTree([
           '/dashboard',
-          this.authService.id$,
+          this.authService.id,
           'profile',
         ]);
       }

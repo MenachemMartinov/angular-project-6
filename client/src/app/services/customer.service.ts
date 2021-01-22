@@ -8,21 +8,25 @@ import { AuthService } from './auth.service';
   providedIn: 'root',
 })
 export class CustomerService {
-  customerObservable: Observable<Customer> = null;
+  customerObservable$: Observable<Customer> = null;
 
   //  headers
   readonly headers = new HttpHeaders()
-    .set('auth-token', `${this.authService.token$}`)
+    .set('auth-token', `${this.authService.token}`)
     .set('Authorization', 'my-auth-token')
     .set('Content-Type', 'application/json');
   constructor(private authService: AuthService, private http: HttpClient) {}
 
   async getCustomerInfo() {
     await this.authService.getToken();
-    console.log(this.authService.headers);
-    this.customerObservable = this.http.get<Customer>(
+
+    const headers = new HttpHeaders()
+    .set('auth-token', `${this.authService.token}`)
+    .set('Authorization', 'my-auth-token')
+    .set('Content-Type', 'application/json');
+    this.customerObservable$ = this.http.get<Customer>(
       `${this.authService.basicUrl}/users/user-details`,
-      { headers: this.headers }
+      { headers: headers }
     );
   }
 
@@ -31,7 +35,7 @@ export class CustomerService {
     if (valid) {
       this.http
         .put<Customer>(
-          `${this.authService.basicUrl}/users/${this.authService.id$}`,
+          `${this.authService.basicUrl}/users/${this.authService.id}`,
           JSON.stringify(value),
           {
             headers: this.headers,

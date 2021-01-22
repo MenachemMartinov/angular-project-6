@@ -32,8 +32,8 @@ export class ProfileEditComponent implements OnInit {
 
   ngOnInit(): void {
     // subscribe to the observable to get data
-    if (this.customerService.customerObservable) {
-      this.customerService.customerObservable.subscribe((data) => {
+    if (this.customerService.customerObservable$) {
+      this.customerService.customerObservable$.subscribe((data) => {
         console.log(data);
 
         this.form = data;

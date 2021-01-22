@@ -13,13 +13,13 @@ export class CardsComponent implements OnInit {
   customerId: string = '';
 
   // for subscribe to get all cards
-  allCards: Cards[];
+  allCards: Cards[] = [];
   constructor(
     private cardService: CordService,
     private authService: AuthService
   ) {
     this.cardService.allCards();
-    this.customerId = this.authService.id$;
+    this.customerId = this.authService.id;
     console.log(this.allCards);
   }
 

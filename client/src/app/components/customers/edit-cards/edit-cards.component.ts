@@ -21,7 +21,7 @@ export class EditCardsComponent implements OnInit {
     activateRoute.params.subscribe((data: any) => {
       console.log(data);
       console.log(data?.id);
-      this.cardService.cardId$ = data?.id;
+      this.cardService.cardId = data?.id;
     });
     this.cardService.getCardInfo();
   }

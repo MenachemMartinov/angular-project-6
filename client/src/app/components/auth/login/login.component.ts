@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { map } from 'rxjs/operators';
-import { Customer } from 'src/app/interface/customer';
 import { CustomerLogin } from 'src/app/interface/customerLogin';
 import { AuthService } from 'src/app/services/auth.service';
 

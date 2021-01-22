@@ -1,0 +1,15 @@
+<ul class="nav flex-column pt-4 sticky-top" *ngIf="navItems; else notWork">
+  <li *ngFor="let item of navItems" class="pl-4">
+    <a
+      [routerLink]="item.link"
+      routerLinkActive="active"
+      class="nav-link text-white "
+    >
+      <i *ngIf="item.icon" [ngClass]="[item.icon]"></i>
+      <span class="ml-3">{{ item.title }}</span>
+    </a>
+  </li>
+</ul>
+<ng-template #notWork>
+  loading...
+</ng-template>

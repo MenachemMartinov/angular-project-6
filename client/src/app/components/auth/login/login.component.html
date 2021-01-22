@@ -1,0 +1,85 @@
+<app-messages-to-user
+  icon="fas fa-sign-in-alt"
+  title="form login"
+  description="her you login to her services"
+></app-messages-to-user>
+
+<div class="row">
+  <div class="col-12">
+    <form
+      #customerForm="ngForm"
+      (ngSubmit)="onSubmit(customerForm)"
+      novalidate="novalidate"
+
+    >
+      <div class="row justify-content-center">
+        <div class="col-md-5 mb-3">
+          <label for="email"> <span class="text-danger">*</span> Email </label>
+          <input
+            type="email"
+            #e="ngModel"
+            name="email"
+            [(ngModel)]="form.email"
+            id="email"
+            class="form-control"
+            required
+            pattern="^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$"
+            [ngClass]="{
+              'is-valid': e.touched && e.valid,
+              'is-invalid': e.touched && e.invalid
+            }"
+            autocomplete="email"
+          />
+          <div *ngIf="e.errors?.required" class="invalid-feedback">
+            Email is required
+          </div>
+          <div *ngIf="e.errors?.pattern" class="invalid-feedback">
+            Please enter a valid email address
+          </div>
+        </div>
+
+        <div class="col-md-5 mb-3">
+          <label for="password"> <span class="text-danger">*</span> Password </label>
+          <input
+            type="password"
+            #password="ngModel"
+            name="password"
+            [(ngModel)]="form.password"
+            id="password"
+            class="form-control"
+            required
+            minlength="6"
+            [ngClass]="{
+              'is-valid': password.touched && password.valid,
+              'is-invalid': password.touched && password.invalid
+            }"
+            autocomplete="current-password"
+          />
+          <div *ngIf="e.errors?.required" class="invalid-feedback">
+            Password is required
+          </div>
+          <div *ngIf="e.errors?.pattern" class="invalid-feedback">
+            Please enter a valid Password address
+          </div>
+        </div>
+      </div>
+
+      <div class="alert-primary p-3 text-center">
+        <a routerLink="/subscribe" class="btn btn-secondary">subscribe</a>
+        <a routerLink="/login" class="btn btn-secondary">Cancel</a>
+
+        <input
+          type="submit"
+          [disabled]="customerForm.form.invalid"
+          value="Log in"
+          class="btn btn-primary ml-3"
+        />
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<div>
+  <pre></pre>
+</div>

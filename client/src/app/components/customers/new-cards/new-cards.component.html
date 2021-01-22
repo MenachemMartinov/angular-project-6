@@ -1,0 +1,153 @@
+<app-messages-to-user
+  icon="fas fa-user-plus"
+  title="form subscribe"
+  description="her you subscribe to her services"
+></app-messages-to-user>
+
+<div class="row">
+  <div class="col-12">
+    <form
+      #customerForm="ngForm"
+      (ngSubmit)="onSubmit(customerForm)"
+      novalidate="novalidate"
+    >
+      <div class="row justify-content-center">
+        <div class="col-md-5 mb-3">
+          <label for="firstName">
+            <span class="text-danger">*</span> biz Name
+          </label>
+          <input
+            type="text"
+            #BN="ngModel"
+            name="bizName"
+            [(ngModel)]="newCard.bizName"
+            id="bizName"
+            class="form-control"
+            required
+            minlength="2"
+            [ngClass]="{
+              'is-valid': BD.touched && BD.valid,
+              'is-invalid': BD.touched && BD.invalid
+            }"
+            autocomplete="bizName"
+          />
+          <div *ngIf="BD.errors?.required" class="invalid-feedback">
+            First name is required
+          </div>
+          <div *ngIf="BD.errors?.minlength" class="invalid-feedback">
+            First name must be at least
+            {{ BD.errors?.minlength.requiredLength }} characters long
+          </div>
+        </div>
+
+        <div class="col-md-5 mb-3">
+          <label for="bizDescription">
+            <span class="text-danger">*</span> bizDescription
+          </label>
+          <textarea
+            #BD="ngModel"
+            name="bizDescription"
+            [(ngModel)]="newCard.bizDescription"
+            id="bizDescription"
+            class="form-control"
+            required
+            minlength="20"
+            [ngClass]="{
+              'is-valid': BD.touched && BD.valid,
+              'is-invalid': BD.touched && BD.invalid
+            }"
+            autocomplete="bizDescription"
+          ></textarea>
+
+          <div *ngIf="BD.errors?.required" class="invalid-feedback">
+            bizDescription is required
+          </div>
+          <div *ngIf="BD.errors?.minlength" class="invalid-feedback">
+            bizDescription must be at least
+            {{ BD.errors?.minlength.requiredLength }} characters long
+          </div>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-md-5 mb-3">
+          <label for="bizPhone">
+            <span class="text-danger">*</span> biz phone
+          </label>
+          <input
+            type="text"
+            #bizPhone="ngModel"
+            name="bizPhone"
+            [(ngModel)]="newCard.bizPhone"
+            id="bizPhone"
+            class="form-control"
+            required
+            minlength="6"
+            [ngClass]="{
+              'is-valid': bizPhone.touched && bizPhone.valid,
+              'is-invalid': bizPhone.touched && bizPhone.invalid
+            }"
+            autocomplete="bizPhone"
+          />
+          <div *ngIf="bizPhone.errors?.required" class="invalid-feedback">
+            bizPhone is required
+          </div>
+          <div *ngIf="bizPhone.errors?.pattern" class="invalid-feedback">
+            {{ bizPhone.errors?.pattern.actualValue }} is not a valid bizPhone
+            number
+          </div>
+        </div>
+
+        <div class="col-md-5 mb-3">
+          <label for="bizImage">
+            <span class="text-danger">*</span> bizImage
+          </label>
+          <input
+            type="text"
+            #bizImage="ngModel"
+            name="bizImage"
+            [(ngModel)]="newCard.bizImage"
+            id="bizImage"
+            class="form-control"
+            required
+            minlength="6"
+            autocomplete="bizImage"
+          />
+        </div>
+
+        <div class="col-md-5 mb-3">
+          <label for="bizAddress">
+            <span class="text-danger">*</span> bizAddress
+          </label>
+          <input
+            type="text"
+            #bizAddress="ngModel"
+            name="bizAddress"
+            [(ngModel)]="newCard.bizAddress"
+            id="bizAddress"
+            class="form-control"
+            required
+            minlength="2"
+            autocomplete="bizAddress"
+          />
+        </div>
+      </div>
+
+      <div class="alert-primary p-3 text-center">
+        <a routerLink="/" class="btn btn-secondary">login</a>
+
+        <input
+          type="button"
+          (click)="resetForm(customerForm)"
+          value="Reset"
+          class="btn btn-secondary ml-3"
+        />
+        <input
+          type="submit"
+          [disabled]="customerForm.form.invalid"
+          value="Save"
+          class="btn btn-primary ml-3"
+        />
+      </div>
+    </form>
+  </div>
+</div>

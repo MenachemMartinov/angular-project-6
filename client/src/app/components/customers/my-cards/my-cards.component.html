@@ -1,0 +1,46 @@
+<app-messages-to-user
+  icon="far fa-address-card"
+  title="form subscribe"
+  description="her you subscribe to her services"
+></app-messages-to-user>
+
+<div class="row mt-3">
+  <div class="col-12">
+    <div *ngIf="allCards; else loading">
+      <div class="row">
+        <div
+          class="card col-3 p-2 m-3"
+          style="width: 18rem"
+          *ngFor="let cards of allCards; index as idx"
+        >
+          <img [src]="cards.bizImage" class="card-img-top" alt="..." />
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">
+              {{ cards.bizDescription }}
+            </p>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">{{ cards.bizName | titlecase }}</li>
+            <li class="list-group-item">{{ cards.bizPhone | titlecase }}</li>
+            <li class="list-group-item">{{ cards.bizAddress | titlecase }}</li>
+          </ul>
+          <div class="card-body">
+            <a
+              routerLink="/dashboard/{{ customerId }}/cards/{{
+                cards._id
+              }}/edit-card"
+              class="card-link"
+              >Card edit</a
+            >
+          </div>
+        </div>
+      </div>
+      <ng-template #noCustomers>
+        <p><i>No customers...</i></p>
+      </ng-template>
+    </div>
+
+    <ng-template #loading> loading... </ng-template>
+  </div>
+</div>

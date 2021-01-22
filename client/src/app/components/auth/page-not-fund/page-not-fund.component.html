@@ -1,0 +1,15 @@
+<app-messages-to-user
+  icon="fas fa-sign-in-alt"
+  title="page not fund"
+  description="page not fund"
+></app-messages-to-user>
+
+<div *ngIf="isLogged === false; else isLogged">
+  <a routerLink="/subscribe" class="btn btn-secondary">subscribe</a>
+  <a routerLink="/login" class="btn btn-secondary">login</a>
+</div>
+
+<ng-template #isLogged>
+  <a class="btn btn-secondary" appLogOut >Log Out</a>
+  <a routerLink="" class="btn btn-secondary">home</a>
+</ng-template>

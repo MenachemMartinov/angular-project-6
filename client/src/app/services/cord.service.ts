@@ -24,12 +24,6 @@ export class CordService {
     this.token = window.localStorage.getItem('token');
   }
 
-  //  headers
-  private headers = new HttpHeaders()
-    .set('auth-token', `${window.localStorage.getItem('token')}`)
-    .set('Authorization', 'my-auth-token')
-    .set('Content-Type', 'application/json');
-
   constructor(private router: Router, private authService: AuthService) {
     this.getToken()
   }
@@ -39,12 +33,16 @@ export class CordService {
   // new card
   newCard(valid, value) {
     if (valid) {
+      const headers = new HttpHeaders()
+      .set('auth-token', `${this.token}`)
+      .set('Authorization', 'my-auth-token')
+      .set('Content-Type', 'application/json');
       this.authService.http
         .post(
           `${this.authService.basicUrl}/cards/newCard`,
           JSON.stringify(value),
           {
-            headers: this.headers,
+            headers: headers,
           }
         )
         .subscribe((data: any) => {

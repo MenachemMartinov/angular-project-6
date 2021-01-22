@@ -33,15 +33,25 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class CustomerService {
-    constructor(authService, http) {
-        this.authService = authService;
+    constructor(http, injector) {
         this.http = http;
+        this.injector = injector;
+        // the user id end user token
+        this.token = '';
+        this.id = '';
         this.customerObservable$ = null;
-        //  headers
-        this.headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]()
-            .set('auth-token', `${this.authService.token}`)
-            .set('Authorization', 'my-auth-token')
-            .set('Content-Type', 'application/json');
+        // go to AuthService
+        this.authService = null;
+        this.authService = injector.get(_auth_service__WEBPACK_IMPORTED_MODULE_3__["AuthService"]);
+        this.getToken();
+    }
+    getToken() {
+        this.token = '';
+        this.id = '';
+        this.token = window.localStorage.getItem('token');
+        if (!this.id) {
+            return console.log('error', this.id);
+        }
     }
     getCustomerInfo() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
@@ -56,22 +66,27 @@ class CustomerService {
     // update user
     update(valid, value) {
         if (valid) {
+            //  headers
+            const headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]()
+                .set('auth-token', `${this.token}`)
+                .set('Authorization', 'my-auth-token')
+                .set('Content-Type', 'application/json');
             this.http
                 .put(`${this.authService.basicUrl}/users/${this.authService.id}`, JSON.stringify(value), {
-                headers: this.headers,
+                headers: headers,
             })
                 .subscribe(console.log);
         }
     }
 }
-CustomerService.ɵfac = function CustomerService_Factory(t) { return new (t || CustomerService)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵinject"](_auth_service__WEBPACK_IMPORTED_MODULE_3__["AuthService"]), _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpClient"])); };
+CustomerService.ɵfac = function CustomerService_Factory(t) { return new (t || CustomerService)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpClient"]), _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_2__["Injector"])); };
 CustomerService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineInjectable"]({ token: CustomerService, factory: CustomerService.ɵfac, providedIn: 'root' });
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵsetClassMetadata"](CustomerService, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_2__["Injectable"],
         args: [{
                 providedIn: 'root',
             }]
-    }], function () { return [{ type: _auth_service__WEBPACK_IMPORTED_MODULE_3__["AuthService"] }, { type: _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpClient"] }]; }, null); })();
+    }], function () { return [{ type: _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpClient"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_2__["Injector"] }]; }, null); })();
 
 
 /***/ }),
@@ -950,11 +965,6 @@ class CordService {
         // card id end users token
         this.cardId = '';
         this.token = '';
-        //  headers
-        this.headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]()
-            .set('auth-token', `${window.localStorage.getItem('token')}`)
-            .set('Authorization', 'my-auth-token')
-            .set('Content-Type', 'application/json');
         this.getToken();
     }
     // get the token
@@ -964,9 +974,13 @@ class CordService {
     // new card
     newCard(valid, value) {
         if (valid) {
+            const headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]()
+                .set('auth-token', `${this.token}`)
+                .set('Authorization', 'my-auth-token')
+                .set('Content-Type', 'application/json');
             this.authService.http
                 .post(`${this.authService.basicUrl}/cards/newCard`, JSON.stringify(value), {
-                headers: this.headers,
+                headers: headers,
             })
                 .subscribe((data) => {
                 console.log(data);

@@ -1,11 +1,11 @@
 const express = require("express");
 const app = express();
-
+const config = require("config")
 const mongoose = require("mongoose");
 
 // connect to mongo server
 mongoose
-  .connect("mongodb://localhost/project-6", {
+  .connect(config.get("mongoUrl"), {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
